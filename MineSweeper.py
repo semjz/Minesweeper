@@ -10,7 +10,6 @@ def CreateWindow(width, height):
 	x = (ws/2) - (width/2)
 	y = (hs/2) - (height/2)
 	window.geometry(("%dx%d+%d+%d") % (width, height, x, y)) #window size
-	return window
 
 def topRow():
 	global resetButton
@@ -216,7 +215,6 @@ def reConfigTiles():
 
 	
 def reset():
-	no_of_visited_tiles = 0
 	resetSquareStatus()
 	resetVisited()
 	reConfigTiles()
