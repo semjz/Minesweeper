@@ -9,14 +9,14 @@ class GUI:
         self.window = window
         self.rows = rows
         self.cols = cols
-        self.ConfigWindow(self.window, width, height)
-        self.CreateTopBar(self.window)
+        self.configWindow(self.window, width, height)
+        self.createTopBar(self.window)
         self.resetButton = self.createResetButton(self.window)
         self.cells = [[None] * COLS for _ in range(ROWS)]
         self.createButtons(self.window)
 
 
-    def ConfigWindow(self, window, width, height):
+    def configWindow(self, window, width, height):
         ws = window.winfo_screenwidth() #screen width
         hs = window.winfo_screenheight() #screen height
         # coords which put the window in the center of screen
@@ -38,7 +38,7 @@ class GUI:
         resetButton.grid(row = 0, column = Calc_mid_col() ,columnspan = 2, pady = 3)
         return resetButton
 
-    def CreateTopBar(self, window):
+    def createTopBar(self, window):
         topBar = Canvas(window, bg="grey", width = WIDTH, height = 30)
         topBar.grid(row = 0, column = 0, columnspan = 20)
         window.grid_rowconfigure(0, weight=1)
@@ -59,8 +59,10 @@ def createImage(image_path, width, height):
 """before using ImageTk.PhotoImage to create an image Tk()
    must be invoked and it can only be invoked once otherwise 
    program won't work"""
-   
+
 window = Tk()
+window.title("Minesweeper") #title of window
+window.resizable(width=False, height=False)
 availableSquare = createImage("button.png",IMG_WIDTH,IMG_HEIGHT)
 smilyFace = createImage("smilyFace.png",IMG_WIDTH,IMG_HEIGHT)
 wonderFace = createImage("wonderFace.png",IMG_WIDTH,IMG_HEIGHT)
