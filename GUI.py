@@ -1,4 +1,4 @@
-from tkinter import Tk, Canvas, Button
+from tkinter import Tk, Canvas, Button, Label
 from PIL import Image, ImageTk
 from constants import *
 
@@ -20,6 +20,8 @@ class GUI:
         self.createAllImages()
         self.createTopBar(self.window)
         self.resetButton = self.createResetButton(self.window)
+        self.flagCounter = self.createFlagCounter(self.window)
+        self.timer = self.createTimer(self.window)
         self.cells = [[None] * self.cols for _ in range(self.rows)]
         self.createButtons(self.window)
 
@@ -33,21 +35,38 @@ class GUI:
         window.geometry(("%dx%d+%d+%d") % (width, height, x, y)) #window size
 
     def createTopBar(self, window):
-        topBar = Canvas(window, bg="grey", width = self.width, height = 30)
+        topBar = Canvas(window, bg="grey", width = self.width, height = 35)
         topBar.grid(row = 0, column = 0, columnspan = 20)
-        window.grid_rowconfigure(0, weight=1)
+        window.grid_rowconfigure(0, weight = 1)
+
+    def createFlagCounter(self, window):
+        flag_counter = Label(window, bg="grey", text = "0", fg = "blue", font=("Arial", 17))
+        flag_counter.place(x = 0, y = 2)
+        window.update()
+        print(WIDTH / 4 - flag_counter.winfo_width() / 2)
+        flag_counter.place(x = WIDTH / 4 - flag_counter.winfo_width() / 2, y = 2)
+        return flag_counter
+
+    def createTimer(self, window):
+        timer = Label(window, bg="grey", text = "0", fg = "blue", font=("Arial", 17))
+        timer.place(x = 0, y = 2)
+        window.update()
+        print(timer.winfo_width())
+        timer.place(x = WIDTH * 3 / 4 - timer.winfo_width() / 2, y = 2)
+        return timer
 
     def createButtons(self, window):
         for row in range(self.rows):
             for col in range(self.cols):
-                self.cells[row][col] = Button(window, image = self.images["button.png"])
+                self.cells[row][col] = Label(window, image = self.images["button.png"]
+                                            , disabledforeground = "black")
                 self.cells[row][col].grid(row = row + 1, column = col)
                 window.grid_columnconfigure(col, weight = 1)
                 window.grid_rowconfigure(row + 1, weight = 1)
 
     def createResetButton(self, window):
-        resetButton = Button(window, image = self.images["smilyFace"])
-        resetButton.grid(row = 0, column = self.calc_mid_col() ,columnspan = 2, pady = 3)
+        resetButton = Button(window, image = self.images["smilyFace"],bd = 1)
+        resetButton.place(x = WIDTH / 2 - CELL_SIZE / 2, y = (30 - CELL_SIZE) / 2)
         return resetButton
 
     
@@ -56,7 +75,9 @@ class GUI:
         self.images["smilyFace"] = createImage("smilyFace.png", self.img_width, self.img_height)
         self.images["wonderFace"] = createImage("wonderFace.png", self.img_width, self.img_height)
         self.images["deadFace"] = createImage("deadFace.png", self.img_width, self.img_height)
+        self.images["win_face"] = createImage("win_face.png", self.img_width, self.img_height)
         self.images["mine"] = createImage("mine.png", self.img_width, self.img_height)
+        self.images["red_mine"] = createImage("red_mine.png", self.img_width, self.img_height)
         self.images["buttonPressed"] = createImage("0.png", self.img_width, self.img_height)  
         self.images["one"] = createImage("1.png", self.img_width, self.img_height)  
         self.images["two"] = createImage("2.png", self.img_width, self.img_height)  
@@ -66,13 +87,15 @@ class GUI:
         self.images["six"] = createImage("6.png", self.img_width, self.img_height)  
         self.images["seven"] = createImage("7.png", self.img_width, self.img_height)  
         self.images["eight"] = createImage("8.png", self.img_width, self.img_height)
-        self.images["flag"] = createImage("flag.png", self.img_width, self.img_height) 
+        self.images["flag"] = createImage("flag.png", self.img_width, self.img_height)
+        self.images["wrong_flag"] = createImage("wrong_flag.png", self.img_width, self.img_height)
     
-    def calc_mid_col(self):
-        if self.cols % 2 == 0:
-            return self.cols // 2 - 1
-        else:
-            return self.cols // 2
+
+def calc_mid_col(cols):
+    if cols % 2 == 0:
+        return cols // 2 - 1
+    else:
+        return cols // 2 
         
 
 def createImage(image_path, width, height):
