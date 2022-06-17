@@ -1,78 +1,58 @@
-from cell import Cell
+from cell import Cell_backend
 import random
 class Cells_engine:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.cells = self.create_cells()
+        self.cells_backend = self.create_cells()
 
     def create_cells(self):
         cells = [[None] * self.cols for _ in range(self.rows)]
         for row in range(self.rows):
             for col in range(self.cols):
-                cells[row][col] = Cell()
+                cells[row][col] = Cell_backend()
         return cells
 
-    def createMines(self, no_of_mines):
-        for i in range(no_of_mines):
-            row, col = random.randint(0, self.rows - 1),random.randint(0, self.cols - 1)
+    def create_mines(self, no_of_mines):
+        for _ in range(no_of_mines):
+            row, col = random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)
             
-            while self.cells[row][col].get_is_mine():
-                row, col = random.randint(0, self.rows - 1),random.randint(0, self.cols - 1)
+            while self.cells_backend[row][col].get_is_mine():
+                row, col = random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)
             
-            self.cells[row][col].set_is_mine(True)
+            self.cells_backend[row][col].set_is_mine(True)
 
-    def countSurrondingMines(self):
+    def move_mind_pos(self, row, col):
+        self.cells_backend[row][col].set_is_mine(False)
+        new_row, new_col = random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)
+        
+        while self.cells_backend[new_row][new_col].get_is_mine() or (new_row == row and new_col == col):
+            new_row, new_col = random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)
+        
+        self.cells_backend[new_row][new_col].set_is_mine(True)
+
+    def reset_no_of_surronding_mines(self):
         for row in range(self.rows):
             for col in range(self.cols):
-                no_of_sur_mines = 0
-                if self.cells[row][col].get_no_of_sur_mines() == 0:
-                    if 0 < row and 0 < col and self.cells[row-1][col-1].get_is_mine():
-                        no_of_sur_mines += 1
-                    
-                    if 0 < row and self.cells[row-1][col].get_is_mine():
-                        no_of_sur_mines += 1
-                    
-                    if 0 < row and col < self.cols - 1 and self.cells[row-1][col+1].get_is_mine():	
-                        no_of_sur_mines += 1
-                    
-                    if 0 < col and self.cells[row][col-1].get_is_mine():
-                        no_of_sur_mines += 1	
-                    
-                    if col < self.cols - 1 and self.cells[row][col+1].get_is_mine():	
-                        no_of_sur_mines += 1
-                    
-                    if row < self.rows - 1 and 0 < col and self.cells[row+1][col-1].get_is_mine():
-                        no_of_sur_mines += 1
-                    
-                    if row < self.rows - 1 and self.cells[row+1][col].get_is_mine():	
-                        no_of_sur_mines += 1
-                    
-                    if row < self.rows - 1 and col < self.cols - 1 and self.cells[row+1][col+1].get_is_mine():	
-                        no_of_sur_mines += 1
-                    
-                    self.cells[row][col].set_no_of_sur_mines(no_of_sur_mines)
+                if not self.cells_backend[row][col].get_is_mine():
+                    self.cells_backend[row][col].set_no_of_sur_mines(0)
 
-    def getNeighbours(self, row, col):
-        if row == 0 and col == 0:
-            return [[1,0],[1,1],[0,1]]
-        if row == 0  and col == self.cols - 1:
-            return [[0,col-1],[1,col-1],[1,col]]
-        if row == self.rows - 1 and col == 0:
-            return [[row-1,0],[row-1,1],[row,1]]
-        if row == self.rows - 1 and col == self.cols - 1:
-            return [[row-1,col],[row-1,col-1],[row,col-1]]
+    def count_surronding_mines_for_cell(self, row, col):
+        no_of_sur_mines = 0
+        for i in range(max(0, row - 1), min(self.rows, row + 2)):
+            for j in range(max(0, col - 1), min(self.cols, col + 2)):
+                if self.cells_backend[i][j].get_is_mine():
+                    no_of_sur_mines += 1
+        self.cells_backend[row][col].set_no_of_sur_mines(no_of_sur_mines)
 
-        if row == 0:
-            return [[0,col-1],[1,col-1],[1,col],[1,col+1],[0,col+1]]
-        if row == self.rows - 1:
-            return [[row,col-1],[row-1,col-1],[row-1,col],[row-1,col+1],[row,col+1]]		
+    def count_surronding_mines_for_all(self):
+        for row in range(self.rows):
+            for col in range(self.cols):
+                self.count_surronding_mines_for_cell(row, col)
 
-        if col == 0:
-            return [[row-1,col],[row-1,col+1],[row,col+1],[row+1,col+1],[row+1,col]]
-        if col == self.cols - 1:
-            return [[row-1,col],[row-1,col-1],[row,col-1],[row+1,col-1],[row+1,col]]
-        
-        if 0 < row < self.rows - 1 and 0 < col < self.cols - 1:
-            return[[row-1,col-1],[row-1,col],[row-1,col+1],[row,col+1],[row+1,col+1]
-                ,[row+1,col],[row+1,col-1],[row,col-1]]
+    def get_neighbours_cords(self, row, col):
+        neighbours_cords = []
+        for i in range(max(0, row - 1), min(self.rows, row + 2)):
+            for j in range(max(0, col - 1), min(self.cols, col + 2)):
+                neighbours_cords.append([i,j])
+        return neighbours_cords
