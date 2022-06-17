@@ -130,7 +130,7 @@ class Minesweeper():
             self.cell_engine.cells_backend[row][col].set_is_visited(True)
             self.gui.cells_frontend[row][col].configure(image = self.gui.images["buttonPressed"])
             self.unbind_all_buttons_for_cell(row, col)
-            neighbours_cords = self.cell_engine.get_neighbours_cords(row,col)
+            neighbours_cords = self.cell_engine.get_neighbours_cords(row, col)
             for neighbour_cords in neighbours_cords:
                 neighbour_i, neighbour_j = neighbour_cords[0], neighbour_cords[1]
                 if not self.cell_engine.cells_backend[neighbour_i][neighbour_j].get_is_visited():

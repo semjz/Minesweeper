@@ -54,5 +54,7 @@ class Cells_engine:
         neighbours_cords = []
         for i in range(max(0, row - 1), min(self.rows, row + 2)):
             for j in range(max(0, col - 1), min(self.cols, col + 2)):
+                if i == row and j == col:
+                    continue
                 neighbours_cords.append([i,j])
         return neighbours_cords

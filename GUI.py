@@ -1,4 +1,4 @@
-from tkinter import Tk, Canvas, Button, Label
+from tkinter import Tk, Canvas, Button, Label, Frame
 from PIL import Image, ImageTk
 from constants import *
 
@@ -20,12 +20,10 @@ class GUI:
         self.createAllImages()
         self.cells_frontend = [[None] * self.cols for _ in range(self.rows)]
         self.createButtons()
-        self.createTopBar()
+        self.topBar = self.createTopBar()
         self.resetButton = self.createResetButton()
         self.flagCounter = self.createFlagCounter()
         self.timer = self.createTimer()
-        self.update_flag_conter_pos()
-        self.update_timer_pos()
 
 
     def configWindow(self, width, height):
@@ -37,33 +35,20 @@ class GUI:
         self.window.geometry(("%dx%d+%d+%d") % (width, height, x, y)) #window size
 
     def createTopBar(self):
-        topBar = Canvas(self.window, bg="grey", width = self.width, height = 35)
+        topBar = Canvas(self.window, bg="grey", width = self.width, height = TOP_BAR_HEIGHT)
         topBar.grid(row = 0, column = 0, columnspan = 20)
         self.window.grid_rowconfigure(0, weight = 1)
+        return topBar
 
     def createFlagCounter(self):
-        flag_counter = Label(self.window, bg="grey", text = "10", fg = "blue", font=("Arial", 17))
-        flag_counter.place(x = WIDTH / 4 , y = 2)
-        self.window.update()
-        flag_counter.place(x = WIDTH / 4 - flag_counter.winfo_width() / 2, y = 2)
+        flag_counter = Label(self.topBar, bg="grey", text = "10", fg = "blue", font=("Arial", 17))
+        flag_counter.place(relx = 0.25 , rely = 0.5, anchor = "center")
         return flag_counter
 
     def createTimer(self):
-        timer = Label(self.window, bg="grey", text = "0", fg = "blue", font=("Arial", 17))
-        timer.place(x = WIDTH * 3 / 4, y = 2)
-        self.window.update()
-        timer.place(x = WIDTH * 3 / 4 - timer.winfo_width() / 2, y = 2)
+        timer = Label(self.topBar, bg="grey", text = "0", fg = "blue", font=("Arial", 17))
+        timer.place(relx = 0.75 , rely = 0.5, anchor = "center")
         return timer
-
-    def update_timer_pos(self):
-        self.window.update()
-        self.timer.place(x = WIDTH * 3 / 4 - self.timer.winfo_width() / 2, y = 2)
-        self.timer.after(1000, self.update_timer_pos)
-
-    def update_flag_conter_pos(self):
-        self.window.update()
-        self.flagCounter.place(x = WIDTH  / 4 - self.flagCounter.winfo_width() / 2, y = 2)
-        self.flagCounter.after(1000, self.update_flag_conter_pos)
 
     def createButtons(self):
         for row in range(self.rows):
@@ -75,8 +60,8 @@ class GUI:
                 self.window.grid_rowconfigure(row + 1, weight = 1)
 
     def createResetButton(self):
-        resetButton = Button(self.window, image = self.images["smilyFace"],bd = 1)
-        resetButton.place(x = WIDTH / 2 - CELL_SIZE / 2 - 2, y = (30 - CELL_SIZE + 2) / 2)
+        resetButton = Button(self.topBar, image = self.images["smilyFace"], bd = 1)
+        resetButton.place(relx = 0.5, rely = 0.5 , anchor = "center")
         return resetButton
 
     
@@ -111,7 +96,6 @@ def calc_mid_col(cols):
 def createImage(image_path, width, height):
     img = Image.open(image_path).resize((width, height), Image.LANCZOS)
     return ImageTk.PhotoImage(img)
-
 
 
 """before using ImageTk.PhotoImage Tk() must be invoked and it can only be 
