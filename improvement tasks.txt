@@ -1,5 +1,0 @@
-1-understand tkinter better
-2-refactor program to oop
-*-modify reset so that buttons are removed
-*- make the number of tiles adjustable
-*- test checkwin function after task 2 
